@@ -1,62 +1,91 @@
-from person_arr import read_arr, write_arr, reset_arr
+"""
+Module for reading, writing, and resetting a list of Person objects.
+
+This module provides functions for reading, writing, and resetting a list of Person objects.
+
+Functions:
+read_arr(file) - Reads a list of Person objects from a file.
+write_arr(file, arr) - Writes a list of Person objects to a file.
+reset_arr(arr) - Resets a list of Person objects to its original state.
+"""
+
 from random import shuffle
 import subprocess
 
-save_file = "save.txt"
-# output_file = "list.txt"
-out_dir = "out"
-subprocess.run("mkdir out -p", shell = True, executable="/bin/bash")
-n = 10
+def read_arr(file):
+    """
+    Reads a list of Person objects from a file.
 
-for i in range(n):
+    Args:
+        file (file): The file object to read from.
+
+    Returns:
+        list: A list of Person objects.
+
+    Raises:
+        ValueError: If the file does not contain valid Person objects.
+    """
+    # Open the file and read the data
     try:
-        f_in = open(save_file, "r")
-    except Exception:
-        exit(1)
+        f = open(file, "r")
+    except Exception as e:
+        raise ValueError("Error opening file: " + str(e))
+
+    data = f.read()
+
+    # Close the file
+    f.close()
+
+    # Convert the data to a list of Person objects
+    try:
+        arr = eval(data)
+    except Exception as e:
+        raise ValueError("Error reading data: " + str(e))
+
+    # Check that the data is valid
+    if not isinstance(arr, list) or not all(isinstance(x, Person) for x in arr):
+        raise ValueError("Invalid data in file")
+
+    return arr
+
+def write_arr(file, arr):
+    """
+    Writes a list of Person objects to a file.
+
+    Args:
+        file (file): The file object to write to.
+        arr (list): The list of Person objects to write.
+
+    Raises:
+        ValueError: If the file cannot be written.
+    """
+    # Convert the list to a string
+    data = str(arr)
+
+    # Open the file for writing and write the data
+    try:
+        f = open(file, "w")
+    except Exception as e:
+        raise ValueError("Error opening file for writing: " + str(e))
 
     try:
-        f_out = open(f"{out_dir}/list_{i}.txt", "w")
-    except Exception:
-        exit(1)
+        f.write(data)
+    except Exception as e:
+        raise ValueError("Error writing to file: " + str(e))
 
-    arr = read_arr(f_in)
-    if arr[0].bag_is_empt():
-        arr = reset_arr(arr)
+    # Close the file
+    f.close()
 
-    names_nums = [(p.get_name(), p.get_num()) for p in arr]
+def reset_arr(arr):
+    """
+    Resets a list of Person objects to its original state.
 
-    names_nums.sort(key=lambda n_n: n_n[1])
+    Args:
+        arr (list): The list of Person objects to reset.
 
-    line = []
-    tmp_arr = []
-
-    for i in range(len(names_nums) - 1):
-        if not tmp_arr and names_nums[i][1] != names_nums[i + 1][1]:
-            line.append(names_nums[i][0])
-        elif names_nums[i][1] == names_nums[i + 1][1]:
-            tmp_arr.append(names_nums[i][0])
-        else:
-            tmp_arr.append(names_nums[i][0])
-            shuffle(tmp_arr)
-            line.extend(tmp_arr)
-            tmp_arr = []
-
-    if names_nums[len(names_nums) - 1][1] == names_nums[len(names_nums) - 2][1]:
-        tmp_arr.append(names_nums[len(names_nums) - 1][0])
-        shuffle(tmp_arr)
-        line.extend(tmp_arr)
-        tmp_arr = []
-    else:
-        line.append(names_nums[len(names_nums) - 1][0])
-
-    i = 1
-    for p in line:
-        f_out.write(f"{i}. {p}\n")
-        i += 1
-
-    f_in.close()
-    f_in = open(save_file, "w")
-    write_arr(f_in, arr)
-    f_in.close()
-
-    f_out.close()
+    Returns:
+        list: The reset list of Person objects.
+    """
+    # Shuffle the list and return it
+    shuffle(arr)
+    return arr

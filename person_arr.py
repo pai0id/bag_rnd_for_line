@@ -6,6 +6,23 @@ from range import get_5_range
 # После двоеточия сохраняются начальные значения оставшихся в мешке диапазонов
 
 def read_arr(file):
+    """
+    Reads a file containing a list of people and their initial bag contents.
+
+    Args:
+    file (file): The file object to read from.
+
+    Returns:
+    list: A list of Person objects, each with a name and a list of bag contents.
+
+    Raises:
+    Exception: If the file cannot be read or if the format of the file is incorrect.
+
+    The format of the file is as follows:
+    Each line contains a name and a bag content separated by a colon.
+    The bag content is a comma-separated list of integers.
+    If the bag content is not a valid list of integers, an empty list is used instead.
+    """
     arr = []
     lst = file.readlines()
     for line in lst:
